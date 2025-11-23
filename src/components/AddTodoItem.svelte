@@ -3,6 +3,9 @@
     import {onInterval} from "../utils/onInterval.js";
     import {getTodos} from "../utils/getTodos.js";
     import {format} from "../utils/format.js";
+    import TodoItem from "./TodoItem.svelte";
+    import {v4 as uuid} from 'uuid'
+
     export let title = "Enter what do you want to do:";
     export let buttonTitle = "Add todo";
 
@@ -52,7 +55,10 @@
     })
 
     function handleAddClick() {
-        items = [...items, 'item']
+        items = [...items, {
+            id: uuid(),
+            text: "Item text",
+        }]
     }
 
     let text = ''
@@ -89,9 +95,23 @@
     />
     <button on:click={handleAddClick}>{buttonTitle}</button>
 </div>
-{JSON.stringify(items, null, 2)}
-<br>
 
+{#if items.length === 0}
+    No items yet
+{:else if items.length === 4}
+    You have 4 items to do
+{:else }
+    {#each items as {id, text}, index (id)}
+        <TodoItem title={`${index + 1}: ${text}`} />
+    {:else }
+        No items yet
+    {/each}
+
+    {JSON.stringify(items, null, 2)}
+{/if}
+
+<br>
+<!--{@debug items}-->
 <style>
     :global(label) {
         color: blueviolet;
