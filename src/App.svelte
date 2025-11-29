@@ -1,59 +1,42 @@
 <script>
     import AddTodoItem from "./components/AddTodoItem.svelte";
-    import {createEventDispatcher, onMount} from "svelte";
     import TodoItem from "./components/TodoItem.svelte";
-    import {getTodos} from "./utils/getTodos.js";
     import {v4 as uuid} from 'uuid'
+    import {todoItems} from "./store/customStore.js";
     export let name;
-
-    // const props = {
-    //     title: "What to do?",
-    //     buttonTitle: "Go!",
-    //     someProp: "some prop value",
-    // }
-
-    let title = "What to do "
 
     let items = []
 
-    onMount(() => {
-        console.log('onMount')
-        getTodos().then(value => {
-            items = value;
-        })
-    })
-
     function handleAddClick(event) {
-        items = [...items, {
-            id: uuid(),
-            text: event.detail,
-            done: false
-        }]
+        todoItems.add(event.detail)
+    }
+
+    function handleDoneChange(id, done) {
+        todoItems.setDone(id, done)
+    }
+
+    function handleRemove(id) {
+        todoItems.remove(id)
     }
 
 </script>
 
 <AddTodoItem on:add={handleAddClick} />
 
-{items.filter(item => item.done).length}/{items.length}
+{$todoItems.filter(item => item.done).length}/{$todoItems.length}
 
-{#each items as {id, text, done}, index (id)}
+{#each $todoItems as {id, text, done}, index (id)}
     <div class="todo-item-container">
         <TodoItem
                 title={`${index + 1}: ${text}`}
-                bind:done={done}
+                {done}
+                on:doneChange={event => handleDoneChange(id, event.detail)}
+                on:remove={() => handleRemove(id)}
         />
     </div>
 {:else }
     No items yet
 {/each}
-
-<!--<AddTodoItem title={("What to do " + "?").toLowerCase()}/>-->
-<!--<br>-->
-<!--<AddTodoItem {title} />-->
-<!--<br>-->
-<!--<AddTodoItem {...props} />-->
-
 
 <style>
     main {

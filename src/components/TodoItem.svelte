@@ -1,18 +1,25 @@
 <script>
     import {v4 as uuid} from 'uuid'
+    import {createEventDispatcher} from "svelte";
     export let title
     export let done
 
-    function handleDoneChange() {
-        console.log('handleDoneChange')
+    const dispatch = createEventDispatcher()
+
+    function handleDoneChange(event) {
+        dispatch('doneChange', event.target.checked)
     }
     function handleRemoveClick() {
-        console.log('handleRemoveClick')
+        dispatch('remove')
     }
 </script>
 
 <div class="main-container">
-    <input type="checkbox" bind:checked={done}/>
+    <input
+            checked={done}
+            type="checkbox"
+            on:input={handleDoneChange}
+    />
     <p class="title">{title}</p>
     <p class="remove-button"
        on:click={() => console.log('inline handler')}
