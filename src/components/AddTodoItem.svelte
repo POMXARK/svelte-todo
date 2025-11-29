@@ -1,10 +1,13 @@
 <script>
+    import { createEventDispatcher} from "svelte";
     import {afterUpdate, beforeUpdate, onDestroy, onMount, tick} from "svelte"
     import {onInterval} from "../utils/onInterval.js";
     import {getTodos} from "../utils/getTodos.js";
     import {format} from "../utils/format.js";
     import TodoItem from "./TodoItem.svelte";
     import {v4 as uuid} from 'uuid'
+
+
 
     export let title = "Enter what do you want to do:";
     export let buttonTitle = "Add todo";
@@ -46,22 +49,27 @@
         counter2++
     }, 1000)
 
-    beforeUpdate(() => {
-        console.log('beforeUpdate')
-    })
+    // beforeUpdate(() => {
+    //     console.log('beforeUpdate')
+    // })
+    //
+    // afterUpdate(() => {
+    //     console.log('afterUpdate')
+    // })
 
-    afterUpdate(() => {
-        console.log('afterUpdate')
-    })
-
-    function handleAddClick() {
-        items = [...items, {
-            id: uuid(),
-            text: "Item text",
-        }]
-    }
+    const dispatch = createEventDispatcher();
 
     let text = ''
+
+
+    function handleTextInput(event){
+        text = event.target.value
+    }
+
+    function handleAddClick(){
+        dispatch('add', text)
+    }
+
     async function handleTextChange(event) {
         const { selectionStart, selectionEnd, value } = this
         text = format(event.target.value)
@@ -71,17 +79,17 @@
         this.selectionEnd = selectionEnd
     }
 
-    $: console.log("logs", items)
-
-    $: if (items.length > 5) {
-        console.log("logs", items)
-    }
-
-    $: {
-        if (items.length > 5) {
-        console.log("logs", items)
-        }
-    }
+    // $: console.log("logs", items)
+    //
+    // $: if (items.length > 5) {
+    //     console.log("logs", items)
+    // }
+    //
+    // $: {
+    //     if (items.length > 5) {
+    //     console.log("logs", items)
+    //     }
+    // }
 </script>
 
 {counter}
@@ -92,27 +100,19 @@
     <input class="todo-input" id="todo-text"
         value={text}
         on:input={handleTextChange}
+        on:input={handleTextInput}
     />
     <button on:click={handleAddClick}>{buttonTitle}</button>
 </div>
 
-{#if items.length === 0}
-    No items yet
-{:else if items.length === 4}
-    You have 4 items to do
-{:else }
-    {#each items as {id, text}, index (id)}
-        <TodoItem title={`${index + 1}: ${text}`} />
-    {:else }
-        No items yet
-    {/each}
-
-    {JSON.stringify(items, null, 2)}
-{/if}
 
 <br>
 <!--{@debug items}-->
 <style>
+    .todo-item-container {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
     :global(label) {
         color: blueviolet;
     }
