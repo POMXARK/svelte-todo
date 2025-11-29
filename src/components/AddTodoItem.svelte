@@ -98,9 +98,7 @@
 <div class="main-container">
     <label for="todo-text">{title}</label>
     <input class="todo-input" id="todo-text"
-        value={text}
-        on:input={handleTextChange}
-        on:input={handleTextInput}
+        bind:value={text}
     />
     <button on:click={handleAddClick}>{buttonTitle}</button>
 </div>

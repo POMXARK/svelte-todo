@@ -1,6 +1,7 @@
 <script>
     import {v4 as uuid} from 'uuid'
     export let title
+    export let done
 
     function handleDoneChange() {
         console.log('handleDoneChange')
@@ -11,7 +12,7 @@
 </script>
 
 <div class="main-container">
-    <input type="checkbox" on:input={handleDoneChange}/>
+    <input type="checkbox" bind:checked={done}/>
     <p class="title">{title}</p>
     <p class="remove-button"
        on:click={() => console.log('inline handler')}

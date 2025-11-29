@@ -27,21 +27,22 @@
         items = [...items, {
             id: uuid(),
             text: event.detail,
+            done: false
         }]
     }
 
 </script>
 
-<main>
-    <h1>Hello {name}!</h1>
-    <p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-</main>
-<label for="">Some text</label>
 <AddTodoItem on:add={handleAddClick} />
 
-{#each items as {id, text}, index (id)}
+{items.filter(item => item.done).length}/{items.length}
+
+{#each items as {id, text, done}, index (id)}
     <div class="todo-item-container">
-        <TodoItem title={`${index + 1}: ${text}`} />
+        <TodoItem
+                title={`${index + 1}: ${text}`}
+                bind:done={done}
+        />
     </div>
 {:else }
     No items yet
